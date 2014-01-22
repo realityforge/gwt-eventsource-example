@@ -21,7 +21,7 @@ public class TimeResource
   @PostConstruct
   public void postConstruct()
   {
-    sch.scheduleWithFixedDelay( new TimeGenerator( _broadcaster ), 0, 5, TimeUnit.SECONDS );
+    sch.scheduleWithFixedDelay( new TimeGenerator( _broadcaster ), 0, 1, TimeUnit.SECONDS );
   }
 
   @GET

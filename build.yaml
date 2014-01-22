@@ -12,3 +12,6 @@ artifacts:
   javax_validation_sources: javax.validation:validation-api:jar:sources:1.0.0.GA
 
   gwt_eventsource: org.realityforge.gwt.eventsource:gwt-eventsource:jar:9411865
+
+  jersey_server: org.glassfish.jersey.core:jersey-server:jar:2.0
+  jersey_sse: org.glassfish.jersey.media:jersey-media-sse:jar:2.0

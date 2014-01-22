@@ -42,7 +42,7 @@ public final class Example
       final String moduleBaseURL = GWT.getModuleBaseURL();
       final String moduleName = GWT.getModuleName();
       final String eventSourceURL =
-        moduleBaseURL.substring( 0, moduleBaseURL.length() - moduleName.length() - 1 ) + "ticker";
+        moduleBaseURL.substring( 0, moduleBaseURL.length() - moduleName.length() - 1 ) + "api/time";
       url.setValue( eventSourceURL );
 
       _connect = new Button( "Connect", new ClickHandler()

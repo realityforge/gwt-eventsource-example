@@ -26,7 +26,6 @@ public class TimeResource
 
   @GET
   @Produces("text/event-stream")
-  @Path("/")
   public EventOutput getMessages()
   {
     final EventOutput eventOutput = new EventOutput();

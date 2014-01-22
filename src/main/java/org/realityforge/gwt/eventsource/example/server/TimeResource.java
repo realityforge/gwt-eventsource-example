@@ -16,12 +16,12 @@ import org.glassfish.jersey.media.sse.SseBroadcaster;
 public class TimeResource
 {
   private final SseBroadcaster _broadcaster = new SseBroadcaster();
-  private final ScheduledExecutorService sch = Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService _scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
   @PostConstruct
   public void postConstruct()
   {
-    sch.scheduleWithFixedDelay( new TimeGenerator( _broadcaster ), 0, 1, TimeUnit.SECONDS );
+    _scheduledExecutor.scheduleWithFixedDelay( new TimeGenerator( _broadcaster ), 0, 1, TimeUnit.SECONDS );
   }
 
   @GET

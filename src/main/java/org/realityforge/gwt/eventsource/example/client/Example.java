@@ -125,7 +125,7 @@ public final class Example
       @Override
       public void onMessageEvent( @Nonnull final MessageEvent event )
       {
-        appendText( "message: " + event.getData(), "black" );
+        appendText( event.getMessageType() + ": " + event.getData(), "black" );
         log( eventSource, "EventSource Message: " + event.getData() +
                           " LastEventId=" + event.getLastEventId() +
                           " Type=" + event.getMessageType() + "." );

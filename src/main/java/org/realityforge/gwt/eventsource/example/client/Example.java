@@ -55,6 +55,7 @@ public final class Example
         {
           _open.setEnabled( false );
           eventSource.open( url.getValue() );
+          eventSource.subscribeTo( "time" );
           log( eventSource, "Opening EventSource." );
         }
       } );
@@ -63,6 +64,7 @@ public final class Example
         @Override
         public void onClick( ClickEvent event )
         {
+          eventSource.unsubscribeFrom( "time" );
           eventSource.close();
           _close.setEnabled( false );
           log( eventSource, "Closed EventSource." );

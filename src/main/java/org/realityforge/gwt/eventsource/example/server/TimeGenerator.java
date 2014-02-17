@@ -25,5 +25,8 @@ final class TimeGenerator
     b.data( String.class, "The time is " + new Date() );
 
     _broadcaster.broadcast( b.build() );
+
+    b.name( "time" );
+    _broadcaster.broadcast( b.build() );
   }
 }

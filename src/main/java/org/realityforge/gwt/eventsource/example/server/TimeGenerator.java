@@ -9,6 +9,7 @@ final class TimeGenerator
   implements Runnable
 {
   private final SseBroadcaster _broadcaster;
+  private int _id;
 
   TimeGenerator( final SseBroadcaster broadcaster )
   {
@@ -20,6 +21,7 @@ final class TimeGenerator
   {
     final OutboundEvent.Builder b = new OutboundEvent.Builder();
     b.mediaType( MediaType.TEXT_PLAIN_TYPE );
+    b.id( String.valueOf( _id++ ) );
     b.data( String.class, "The time is " + new Date() );
 
     _broadcaster.broadcast( b.build() );

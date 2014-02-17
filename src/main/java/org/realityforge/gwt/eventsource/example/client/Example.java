@@ -28,8 +28,8 @@ public final class Example
 
   private HTML _messages;
   private ScrollPanel _scrollPanel;
-  private Button _disconnect;
-  private Button _connect;
+  private Button _close;
+  private Button _open;
 
   public void onModuleLoad()
   {
@@ -48,27 +48,27 @@ public final class Example
         moduleBaseURL.substring( 0, moduleBaseURL.length() - moduleName.length() - 1 ) + "api/time";
       url.setValue( eventSourceURL );
 
-      _connect = new Button( "Connect", new ClickHandler()
+      _open = new Button( "Open", new ClickHandler()
       {
         @Override
         public void onClick( final ClickEvent event )
         {
-          _connect.setEnabled( false );
-          eventSource.connect( url.getValue() );
+          _open.setEnabled( false );
+          eventSource.open( url.getValue() );
           log( eventSource, "Opening EventSource." );
         }
       } );
-      _disconnect = new Button( "Disconnect", new ClickHandler()
+      _close = new Button( "Close", new ClickHandler()
       {
         @Override
         public void onClick( ClickEvent event )
         {
           eventSource.close();
-          _disconnect.setEnabled( false );
+          _close.setEnabled( false );
           log( eventSource, "Closed EventSource." );
         }
       } );
-      _disconnect.setEnabled( false );
+      _close.setEnabled( false );
 
       _messages = new HTML();
       _scrollPanel = new ScrollPanel();
@@ -79,8 +79,8 @@ public final class Example
       {
         final FlowPanel controls = new FlowPanel();
         controls.add( url );
-        controls.add( _connect );
-        controls.add( _disconnect );
+        controls.add( _open );
+        controls.add( _close );
         RootPanel.get().add( controls );
       }
     }
@@ -94,7 +94,7 @@ public final class Example
       public void onOpenEvent( @Nonnull final OpenEvent event )
       {
         appendText( "open", "silver" );
-        _disconnect.setEnabled( true );
+        _close.setEnabled( true );
         log( eventSource, "EventSource Open Complete." );
       }
     } );
@@ -104,8 +104,8 @@ public final class Example
       public void onCloseEvent( @Nonnull final CloseEvent event )
       {
         appendText( "close", "silver" );
-        _connect.setEnabled( true );
-        _disconnect.setEnabled( false );
+        _open.setEnabled( true );
+        _close.setEnabled( false );
         log( eventSource, "EventSource Close Complete." );
       }
     } );
@@ -115,8 +115,8 @@ public final class Example
       public void onErrorEvent( @Nonnull final ErrorEvent event )
       {
         appendText( "error", "red" );
-        _connect.setEnabled( false );
-        _disconnect.setEnabled( false );
+        _open.setEnabled( false );
+        _close.setEnabled( false );
         log( eventSource, "EventSource Error." );
       }
     } );

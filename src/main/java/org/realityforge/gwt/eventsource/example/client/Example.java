@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import org.realityforge.gwt.eventsource.client.EventSource;
 import org.realityforge.gwt.eventsource.client.event.CloseEvent;
@@ -23,6 +24,8 @@ import org.realityforge.gwt.eventsource.client.event.OpenEvent;
 public final class Example
   implements EntryPoint
 {
+  private static final Logger LOG = Logger.getLogger( Example.class.getName() );
+
   private HTML _messages;
   private ScrollPanel _scrollPanel;
   private Button _disconnect;
@@ -52,6 +55,7 @@ public final class Example
         {
           _connect.setEnabled( false );
           eventSource.connect( url.getValue() );
+          log( eventSource, "Opening EventSource." );
         }
       } );
       _disconnect = new Button( "Disconnect", new ClickHandler()
@@ -61,6 +65,7 @@ public final class Example
         {
           eventSource.close();
           _disconnect.setEnabled( false );
+          log( eventSource, "Closed EventSource." );
         }
       } );
       _disconnect.setEnabled( false );
@@ -90,6 +95,7 @@ public final class Example
       {
         appendText( "open", "silver" );
         _disconnect.setEnabled( true );
+        log( eventSource, "EventSource Open Complete." );
       }
     } );
     eventSource.addCloseHandler( new CloseEvent.Handler()
@@ -100,6 +106,7 @@ public final class Example
         appendText( "close", "silver" );
         _connect.setEnabled( true );
         _disconnect.setEnabled( false );
+        log( eventSource, "EventSource Close Complete." );
       }
     } );
     eventSource.addErrorHandler( new ErrorEvent.Handler()
@@ -110,6 +117,7 @@ public final class Example
         appendText( "error", "red" );
         _connect.setEnabled( false );
         _disconnect.setEnabled( false );
+        log( eventSource, "EventSource Error." );
       }
     } );
     eventSource.addMessageHandler( new MessageEvent.Handler()
@@ -118,6 +126,7 @@ public final class Example
       public void onMessageEvent( @Nonnull final MessageEvent event )
       {
         appendText( "message: " + event.getData(), "black" );
+        log( eventSource, "EventSource Message: " + event.getData() + "." );
       }
     } );
   }
@@ -129,5 +138,21 @@ public final class Example
     div.setAttribute( "style", "color:" + color );
     _messages.getElement().appendChild( div );
     _scrollPanel.scrollToBottom();
+  }
+
+  private void log( final EventSource eventSource, final String message )
+  {
+    final String suffix;
+    if ( EventSource.ReadyState.CLOSED != eventSource.getReadyState() )
+    {
+      suffix = " URL: " + eventSource.getURL() +
+               " WithCredentials: " + eventSource.getWithCredentials();
+    }
+    else
+    {
+      suffix = "";
+    }
+
+    LOG.warning( message + " ReadyState: " + eventSource.getReadyState().name() + suffix );
   }
 }

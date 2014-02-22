@@ -12,17 +12,14 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.realityforge.gwt.eventsource.client.EventSource;
-import org.realityforge.gwt.eventsource.client.event.CloseEvent;
-import org.realityforge.gwt.eventsource.client.event.ErrorEvent;
-import org.realityforge.gwt.eventsource.client.event.MessageEvent;
-import org.realityforge.gwt.eventsource.client.event.OpenEvent;
+import org.realityforge.gwt.eventsource.client.EventSourceListener;
 
 public final class Example
-  implements EntryPoint
+  implements EntryPoint, EventSourceListener
 {
   private static final Logger LOG = Logger.getLogger( Example.class.getName() );
 
@@ -40,21 +37,14 @@ public final class Example
     }
     else
     {
-      registerListeners( eventSource );
-      final TextBox url = new TextBox();
-      final String moduleBaseURL = GWT.getModuleBaseURL();
-      final String moduleName = GWT.getModuleName();
-      final String eventSourceURL =
-        moduleBaseURL.substring( 0, moduleBaseURL.length() - moduleName.length() - 1 ) + "api/time";
-      url.setValue( eventSourceURL );
-
+      eventSource.setListener( this );
       _open = new Button( "Open", new ClickHandler()
       {
         @Override
         public void onClick( final ClickEvent event )
         {
           _open.setEnabled( false );
-          eventSource.open( url.getValue() );
+          eventSource.open( getEventSourceURL() );
           eventSource.subscribeTo( "time" );
           log( eventSource, "Opening EventSource." );
         }
@@ -80,7 +70,6 @@ public final class Example
 
       {
         final FlowPanel controls = new FlowPanel();
-        controls.add( url );
         controls.add( _open );
         controls.add( _close );
         RootPanel.get().add( controls );
@@ -88,51 +77,50 @@ public final class Example
     }
   }
 
-  private void registerListeners( final EventSource eventSource )
+  private String getEventSourceURL()
   {
-    eventSource.addOpenHandler( new OpenEvent.Handler()
-    {
-      @Override
-      public void onOpenEvent( @Nonnull final OpenEvent event )
-      {
-        appendText( "open", "silver" );
-        _close.setEnabled( true );
-        log( eventSource, "EventSource Open Complete." );
-      }
-    } );
-    eventSource.addCloseHandler( new CloseEvent.Handler()
-    {
-      @Override
-      public void onCloseEvent( @Nonnull final CloseEvent event )
-      {
-        appendText( "close", "silver" );
-        _open.setEnabled( true );
-        _close.setEnabled( false );
-        log( eventSource, "EventSource Close Complete." );
-      }
-    } );
-    eventSource.addErrorHandler( new ErrorEvent.Handler()
-    {
-      @Override
-      public void onErrorEvent( @Nonnull final ErrorEvent event )
-      {
-        appendText( "error", "red" );
-        _open.setEnabled( false );
-        _close.setEnabled( false );
-        log( eventSource, "EventSource Error." );
-      }
-    } );
-    eventSource.addMessageHandler( new MessageEvent.Handler()
-    {
-      @Override
-      public void onMessageEvent( @Nonnull final MessageEvent event )
-      {
-        appendText( event.getMessageType() + ": " + event.getData(), "black" );
-        log( eventSource, "EventSource Message: " + event.getData() +
-                          " LastEventId=" + event.getLastEventId() +
-                          " Type=" + event.getMessageType() + "." );
-      }
-    } );
+    final String moduleBaseURL = GWT.getModuleBaseURL();
+    final String moduleName = GWT.getModuleName();
+    return moduleBaseURL.substring( 0, moduleBaseURL.length() - moduleName.length() - 1 ) + "api/time";
+  }
+
+  @Override
+  public void onOpen( @Nonnull final EventSource eventSource )
+  {
+    appendText( "open", "silver" );
+    _close.setEnabled( true );
+    log( eventSource, "EventSource Open Complete." );
+  }
+
+  @Override
+  public void onClose( @Nonnull final EventSource eventSource )
+  {
+    appendText( "close", "silver" );
+    _open.setEnabled( true );
+    _close.setEnabled( false );
+    log( eventSource, "EventSource Close Complete." );
+  }
+
+  @Override
+  public void onMessage( @Nonnull final EventSource eventSource,
+                         @Nullable final String lastEventId,
+                         @Nonnull final String type,
+                         @Nonnull final String data )
+  {
+    appendText( type + ": " + data, "black" );
+    log( eventSource, "EventSource Message: " + data +
+                      " LastEventId=" + lastEventId +
+                      " Type=" + type + "." );
+
+  }
+
+  @Override
+  public void onError( @Nonnull final EventSource eventSource )
+  {
+    appendText( "error", "red" );
+    _open.setEnabled( false );
+    _close.setEnabled( false );
+    log( eventSource, "EventSource Error." );
   }
 
   private void appendText( final String text, final String color )
